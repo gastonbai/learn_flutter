@@ -1,11 +1,12 @@
 import 'package:dio/dio.dart';
 import 'dart:developer';
-import 'package:flutter/foundation.dart';
+import 'package:learn_flutter/data/remote_dummy_data_source/remote_dummy_data_source.dart';
+import 'package:learn_flutter/domain/lockal_evilinsult_data_source.dart';
 
-class evilinsultDataSource {
+class EvilinsultDataSource {
   final Dio dio;
 
-  evilinsultDataSource(this.dio);
+  EvilinsultDataSource(this.dio);
 
   Future<EvilinsultResponse?> getData() async {
     const url = 'https://evilinsult.com/generate_insult.php';
@@ -13,51 +14,18 @@ class evilinsultDataSource {
       final result = await dio.get(
         url,
         queryParameters: {
-          'lang': 'ru',
+          'lang': 'en',
           'type': 'json',
         },
       );
 
-      log(evilinsultModel.toString());
+      log('$result.data');
+
+      return EvilinsultResponse.fromJson(result.data);
     } on DioException catch (e) {
       log('${e.response?.statusCode}');
       log('Нет авторизации');
     }
-
     return null;
   }
 }
-
-class EvilinsultResponse {
-  final int number;
-  final String language;
-  final String insult;
-  final String createdby;
-  final String comment;
-
-  EvilinsultResponse({
-    required this.number,
-    required this.language,
-    required this.insult,
-    required this.createdby,
-    required this.comment,
-  });
-
-
-
-
-
-
-
-
-
-  factory TestResponse.fromJson(Map<String, dynamic> json) {
-    return TestResponse(
-      lat: json['lat'] as double,
-      lon: json['lon'] as double,
-      current: CurrentTest.fromJson(json['current']),
-    );
-  }
-}
-
-
